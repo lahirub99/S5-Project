@@ -56,10 +56,10 @@ RM = "F:\New Folder\Visual Studio\Common7\IDE\CommonExtensions\Microsoft\CMake\C
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "D:\Semester 5\_Project\Xavier"
+CMAKE_SOURCE_DIR = "D:\Semester 5\_Project\S5-Project"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "D:\Semester 5\_Project\Xavier\build"
+CMAKE_BINARY_DIR = "D:\Semester 5\_Project\S5-Project\build"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -86,9 +86,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Semester 5\_Project\Xavier\build\CMakeFiles" "D:\Semester 5\_Project\Xavier\build\\CMakeFiles\progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Semester 5\_Project\S5-Project\build\CMakeFiles" "D:\Semester 5\_Project\S5-Project\build\\CMakeFiles\progress.marks"
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Semester 5\_Project\Xavier\build\CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Semester 5\_Project\S5-Project\build\CMakeFiles" 0
 .PHONY : all
 
 # The main clean target

@@ -1,7 +1,7 @@
 [
 {
-  "directory": "D:/Semester 5/_Project/Xavier/build",
-  "command": "C:\\MinGW\\bin\\g++.exe   -g -o CMakeFiles\\S5-Project.dir\\main.cpp.obj -c \"D:\\Semester 5\\_Project\\Xavier\\main.cpp\"",
-  "file": "D:/Semester 5/_Project/Xavier/main.cpp"
+  "directory": "D:/Semester 5/_Project/S5-Project/build",
+  "command": "C:\\MinGW\\bin\\g++.exe   -g -o CMakeFiles\\S5-Project.dir\\main.cpp.obj -c \"D:\\Semester 5\\_Project\\S5-Project\\main.cpp\"",
+  "file": "D:/Semester 5/_Project/S5-Project/main.cpp"
 }
 ]
