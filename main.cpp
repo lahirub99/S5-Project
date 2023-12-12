@@ -47,10 +47,10 @@ int main() {
 
         // Process the converted values as needed
         // Print the converted values
-        std::cout << "Tire 1 distance: " << tire1Rotation / time << std::endl;
-        std::cout << "Tire 2 distance: " << tire2Rotation / time << std::endl;
-        std::cout << "Tire 3 distance: " << tire3Rotation / time << std::endl;
-        std::cout << "Tire 4 distance: " << tire4Rotation / time << std::endl;
+        std::cout << "Tire 1 rate: " << tire1Rotation / time << std::endl;
+        std::cout << "Tire 2 rate: " << tire2Rotation / time << std::endl;
+        std::cout << "Tire 3 rate: " << tire3Rotation / time << std::endl;
+        std::cout << "Tire 4 rate: " << tire4Rotation / time << std::endl;
         std::cout << std::endl;
 
     }
