@@ -10,7 +10,7 @@
 #include <vector>
 
 int main() {
-    std::ifstream file("data.csv");
+    std::ifstream file("readings.csv");
     std::string line;       // A line in the file
 
     if (!getline(file, line)) {
@@ -39,11 +39,11 @@ int main() {
         }
 
         // Access the converted values
-        float tire1Rotation = values[0];
-        float tire2Rotation = values[1];
-        float tire3Rotation = values[2];
-        float tire4Rotation = values[3];
-        float time = values[4];
+        float time = values[0];
+        float tire1Rotation = values[1];
+        float tire2Rotation = values[2];
+        float tire3Rotation = values[3];
+        float tire4Rotation = values[4];
 
         // Process the converted values as needed
         // Print the converted values
