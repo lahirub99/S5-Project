@@ -1,15 +1,29 @@
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-
-#include <iostream>
 #include <fstream> 
 #include <sstream>
 #include <string>
 #include <vector>
 
+// class SlipPredictor {
+
+// private:
+//     double calculateVelocity(const std::vector<double>& tireSpeeds) {
+//         double sum = 0.0;
+//         for (double speed : tireSpeeds) {
+//             sum += speed;
+//         }
+//         return sum / tireSpeeds.size();
+//     }
+// };
+
 int main() {
+    float tire1rates[10] = {0};
+    std::cout << "Tire 1 rates: " << tire1rates[0] << std::endl;
+    std::cout << "Tire 1 rates: " << tire1rates[9] << std::endl;
+
+    tire1rates[9] = 1.0;
+    std::cout << "Tire 1 rates: " << tire1rates[9] << std::endl;
+
     std::ifstream file("readings.csv");
     std::string line;       // A line in the file
 
@@ -47,11 +61,11 @@ int main() {
 
         // Process the converted values as needed
         // Print the converted values
-        std::cout << "Tire 1 rate: " << tire1Rotation / time << std::endl;
-        std::cout << "Tire 2 rate: " << tire2Rotation / time << std::endl;
-        std::cout << "Tire 3 rate: " << tire3Rotation / time << std::endl;
-        std::cout << "Tire 4 rate: " << tire4Rotation / time << std::endl;
-        std::cout << std::endl;
+        // std::cout << "Tire 1 rate: " << tire1Rotation / time << std::endl;
+        // std::cout << "Tire 2 rate: " << tire2Rotation / time << std::endl;
+        // std::cout << "Tire 3 rate: " << tire3Rotation / time << std::endl;
+        // std::cout << "Tire 4 rate: " << tire4Rotation / time << std::endl;
+        // std::cout << std::endl;
 
     }
     
