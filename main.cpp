@@ -17,8 +17,8 @@
 // };
 
 int main() {
-    const int arraysize = 4; // Size of the arrays
-    const float threshold = 0.05;  // Threshold for difference for inside and outside wheels
+    const int arraysize = 3; // Size of the arrays
+    const float threshold = 0.02;  // Threshold for difference for inside and outside wheels
 
     int frame= 1;    // Frame number
 
@@ -159,7 +159,7 @@ int main() {
                 // Compensate for slipping effect 
                 // Assuming slipping only affects one wheel, adjust the erroneous wheel's reading
                 // To eleminate the slipping, errorneous wheel's reading is set to the reading of the other wheel
-                if (wheel1rate > wheel3rate) {
+                if (wheel1average > wheel3average) {
                     std::cout << "Wheel 1 rate was " << wheel1rate << ". It is adjusted to " << wheel3rate << std::endl;
                     wheel1rate = wheel3rate;
                 } else {
@@ -180,6 +180,15 @@ int main() {
                     wheel4rate = wheel2rate;
                 }
             }
+            
+            // Increment the pointer
+            if (pointer == (arraysize - 1)) {
+                pointer = 0;
+            }
+            else {
+                pointer++;
+            }
+
         } else {
             std::cout << "Initializing... : Waiting for the arrays to be filled with values." << std::endl;
         }
@@ -190,13 +199,6 @@ int main() {
         arrayaverageoutputFile << wheel1average << "," << wheel2average << "," << wheel3average << "," << wheel4average << std::endl;
 
         frame++;
-        // Increment the pointer
-        if (pointer == 9) {
-            pointer = 0;
-        }
-        else {
-            pointer++;
-        }
     }
 
     // Close the output file
@@ -204,8 +206,8 @@ int main() {
     processedoutputFile.close();
     arrayaverageoutputFile.close();
     
-    std::string array[10] = {"00", "a1", "b2", "c3", "d4", "e5", "f6", "g7", "h8", "i9"};
-    std::cout << 3%10 << 2%10 << 1%10 << 0%10 << (-1)%10 << (-2)%10 << (-3)%10 << std::endl;
-    std::cout << array[3%10] << array[2%10] << array[1%10] << array[0%10] << array[(-1)%10] << array[(-2)%10] << array[(-3)%10] << std::endl;
+    // std::string array[10] = {"00", "a1", "b2", "c3", "d4", "e5", "f6", "g7", "h8", "i9"};
+    // std::cout << 3%10 << 2%10 << 1%10 << 0%10 << (-1)%10 << (-2)%10 << (-3)%10 << std::endl;
+    // std::cout << array[3%10] << array[2%10] << array[1%10] << array[0%10] << array[(-1)%10] << array[(-2)%10] << array[(-3)%10] << std::endl;
     return 0;    
 }
