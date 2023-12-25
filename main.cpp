@@ -152,9 +152,8 @@ int main() {
         }
 
         // Write the comma-separated values to the output file
-        outputFile << wheel1average << "," << wheel2average << "," << wheel3average << "," << wheel4average << std::endl;
+        outputFile << wheel1rates[pointer] << "," << wheel2rates[pointer] << "," << wheel3rates[pointer] << "," << wheel4rates[pointer] << std::endl;
 
-        
 
         frame++;
     }
