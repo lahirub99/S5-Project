@@ -19,11 +19,21 @@
 int main() {
     int frame= 1;    // Frame number
 
+    // Arrays to store the rates of each wheel
     float wheel1rates[10] = {0};
     float wheel2rates[10] = {0};
     float wheel3rates[10] = {0};
     float wheel4rates[10] = {0};
+    // Pointer to the current index of the arrays
     int pointer = 0;
+
+    // Variables to store the rate of each wheel with respect to current frame
+    float wheel1rate = 0;
+    float wheel2rate = 0;
+    float wheel3rate = 0;
+    float wheel4rate = 0;
+
+    // Averages of each wheel
     float wheel1average = 0;
     float wheel2average = 0;
     float wheel3average = 0;
@@ -79,12 +89,17 @@ int main() {
         // std::cout << "Tire 4 rate: " << tire4Rotation / time << std::endl;
         // std::cout << std::endl;
 
+        // Calculate the rate of each wheel with respect to current frame
+        wheel1rate = tire1Rotation / time;
+        wheel2rate = tire2Rotation / time;
+        wheel3rate = tire3Rotation / time;
+        wheel4rate = tire4Rotation / time;
 
         // Update the arrays with the value related to current readings
-        wheel1rates[pointer] = tire1Rotation / time;
-        wheel2rates[pointer] = tire2Rotation / time;
-        wheel3rates[pointer] = tire3Rotation / time;
-        wheel4rates[pointer] = tire4Rotation / time;
+        wheel1rates[pointer] = wheel1rate;
+        wheel2rates[pointer] = wheel2rate;
+        wheel3rates[pointer] = wheel3rate;
+        wheel4rates[pointer] = wheel4rate;
 
         // Increment the pointer
         if (pointer == 9) {
@@ -140,20 +155,39 @@ int main() {
                 */
                
                 // Compare the averages of inside wheels and outside wheels
+                // Compensated instentanius values are stored in wheel1rate, wheel2rate, wheel3rate, wheel4rate. But the values related to original readings are stored in arrays. Therefore, when we compare the averages of the wheels, getting values from the arrays makes no error after compensation.
+                
                 // Inside wheels: wheel1 and wheel3
                 if ( ( abs(wheel1average - wheel3average) / std::min(wheel1average,wheel3average) ) > threshold) {
                     std::cout << "! Slip detected on inside wheels. \n\t- Wheel 1 average: " << wheel1average << "\n\t- Wheel 3 average: " << wheel3average << std::endl;
+
+                    // Compensate for slipping effect 
+                    // Assuming slipping only affects one wheel, adjust the erroneous wheel's reading
+                    // To eleminate the slipping, errorneous wheel's reading is set to the reading of the other wheel
+                    if (wheel1rate > wheel3rate) {
+                        wheel1rate = wheel3rate;
+                    } else {
+                        wheel3rate = wheel1rate;
+                    }
                 }
                 if ( ( abs(wheel2average - wheel4average) / std::min(wheel2average,wheel4average) ) > threshold) {
                     std::cout << "! Slip detected on outside wheels. \n\t- Wheel 2 average: " << wheel2average << "\n\t- Wheel 4 average: " << wheel4average << std::endl;
+
+                    // Compensate for slipping effect 
+                    // Assuming slipping only affects one wheel, adjust the erroneous wheel's reading
+                    // To eleminate the slipping, errorneous wheel's reading is set to the reading of the other wheel
+                    if (wheel2rate > wheel4rate) {
+                        wheel2rate = wheel4rate;
+                    } else {
+                        wheel4rate = wheel2rate;
+                    }
                 }
         } else {
             std::cout << "Initializing... : Waiting for the arrays to be filled with values." << std::endl;
         }
 
         // Write the comma-separated values to the output file
-        outputFile << wheel1rates[pointer] << "," << wheel2rates[pointer] << "," << wheel3rates[pointer] << "," << wheel4rates[pointer] << std::endl;
-
+        outputFile << wheel1rate << "," << wheel2rate << "," << wheel3rate << "," << wheel4rate << std::endl;
 
         frame++;
     }
