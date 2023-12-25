@@ -17,12 +17,17 @@
 // };
 
 int main() {
-    float tire1rates[10] = {0};
-    std::cout << "Tire 1 rates: " << tire1rates[0] << std::endl;
-    std::cout << "Tire 1 rates: " << tire1rates[9] << std::endl;
+    float wheel1rates[10] = {0};
+    float wheel2rates[10] = {0};
+    float wheel3rates[10] = {0};
+    float wheel4rates[10] = {0};
+    int pointer = 0;
+    float wheel1average = 0;
+    float wheel2average = 0;
+    float wheel3average = 0;
+    float wheel4average = 0;
 
-    tire1rates[9] = 1.0;
-    std::cout << "Tire 1 rates: " << tire1rates[9] << std::endl;
+    float threshold = 0.05;  // Threshold for difference for inside and outside wheels
 
     std::ifstream file("readings.csv");
     std::string line;       // A line in the file
@@ -66,6 +71,77 @@ int main() {
         // std::cout << "Tire 3 rate: " << tire3Rotation / time << std::endl;
         // std::cout << "Tire 4 rate: " << tire4Rotation / time << std::endl;
         // std::cout << std::endl;
+
+
+        // Update the arrays with the value related to current readings
+        wheel1rates[pointer] = tire1Rotation / time;
+        wheel2rates[pointer] = tire2Rotation / time;
+        wheel3rates[pointer] = tire3Rotation / time;
+        wheel4rates[pointer] = tire4Rotation / time;
+
+        // Increment the pointer
+        if (pointer == 9) {
+            pointer = 0;
+        }
+        else {
+            pointer++;
+        }
+
+        // TEST: Print the arrays
+        std::cout << "Wheel 1 rates: ";
+        for (int i = 0; i < 10; i++) {
+            std::cout << wheel1rates[i] << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Wheel 2 rates: ";
+        for (int i = 0; i < 10; i++) {
+            std::cout << wheel2rates[i] << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Wheel 3 rates: ";
+        for (int i = 0; i < 10; i++) {
+            std::cout << wheel3rates[i] << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Wheel 4 rates: ";
+        for (int i = 0; i < 10; i++) {
+            std::cout << wheel4rates[i] << " ";
+        }
+        std::cout << std::endl;
+
+        // In the beginging, the arrays are filled with zero. 
+        // We need to calculate the average of each wheel after the arrays are filled with values.
+        if (!(wheel1rates[9] == 0 && wheel2rates[9] == 0 && wheel3rates[9] == 0 && wheel4rates[9] == 0)) {
+            // Calculate the average of each wheel
+            for (int i = 0; i < 10; i++) {
+                wheel1average += wheel1rates[i];
+                wheel2average += wheel2rates[i];
+                wheel3average += wheel3rates[i];
+                wheel4average += wheel4rates[i];
+                }
+                wheel1average /= 10;    // Divide by 10 to get the average
+                wheel2average /= 10;
+                wheel3average /= 10;
+                wheel4average /= 10;
+                
+                /* 
+                Assumed that,
+                    wheel1 - front left
+                    wheel2 - front right
+                    wheel3 - rear left
+                    wheel4 - rear right
+                */
+               
+                // Compare the averages of inside wheels and outside wheels
+                // Inside wheels: wheel1 and wheel3
+                if ( ( abs(wheel1average - wheel3average) / std::min(wheel1average,wheel3average) ) > threshold) {
+                    std::cout << "Slip detected on inside wheels. Wheel 1 average: " << wheel1average << "Wheel 3 average: " << wheel3average << std::endl;
+                }
+                if ( ( abs(wheel2average - wheel4average) / std::min(wheel2average,wheel4average) ) > threshold) {
+                    std::cout << "Slip detected on outside wheels." << std::endl;
+                }
+        }
+        
 
     }
     
