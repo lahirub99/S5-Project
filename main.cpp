@@ -17,13 +17,16 @@
 // };
 
 int main() {
+    const int arraysize = 4; // Size of the arrays
+    const float threshold = 0.05;  // Threshold for difference for inside and outside wheels
+
     int frame= 1;    // Frame number
 
     // Arrays to store the rates of each wheel
-    float wheel1rates[10] = {0};
-    float wheel2rates[10] = {0};
-    float wheel3rates[10] = {0};
-    float wheel4rates[10] = {0};
+    float wheel1rates[arraysize] = {0};
+    float wheel2rates[arraysize] = {0};
+    float wheel3rates[arraysize] = {0};
+    float wheel4rates[arraysize] = {0};
     // Pointer to the current index of the arrays
     int pointer = 0;
 
@@ -39,13 +42,13 @@ int main() {
     float wheel3average = 0;
     float wheel4average = 0;
 
-    float threshold = 0.05;  // Threshold for difference for inside and outside wheels
-
     std::ifstream file("readings.csv");
     std::string line;       // A line in readings the file
 
     // Open the output file
-    std::ofstream outputFile("output.csv");
+    std::ofstream rawoutputFile("output_raw.csv");
+    std::ofstream processedoutputFile("output_processed.csv");
+    std::ofstream arrayaverageoutputFile("output_arrayaverage.csv");
     
     if (!getline(file, line)) {
         std::cerr << "Error reading the file or file is empty." << std::endl;
@@ -101,6 +104,92 @@ int main() {
         wheel3rates[pointer] = wheel3rate;
         wheel4rates[pointer] = wheel4rate;
 
+        // TEST: Print the arrays
+        std::cout << "Wheel 1 rates: ";
+        for (int i = 0; i < arraysize; i++) {
+            std::cout << wheel1rates[i] << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Wheel 2 rates: ";
+        for (int i = 0; i < arraysize; i++) {
+            std::cout << wheel2rates[i] << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Wheel 3 rates: ";
+        for (int i = 0; i < arraysize; i++) {
+            std::cout << wheel3rates[i] << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Wheel 4 rates: ";
+        for (int i = 0; i < arraysize; i++) {
+            std::cout << wheel4rates[i] << " ";
+        }
+        std::cout << std::endl;
+
+        // In the beginging, the arrays are filled with zero. 
+        // We need to calculate the average of each wheel after the arrays are filled with values.
+        if (!(wheel1rates[arraysize -1] == 0 && wheel2rates[arraysize-1] == 0 && wheel3rates[arraysize-1] == 0 && wheel4rates[arraysize-1] == 0)) {
+            // Calculate the average of each wheel in a selected range
+            for (int i = 0; i < arraysize; i++) {
+                wheel1average += wheel1rates[i];
+                wheel2average += wheel2rates[i];
+                wheel3average += wheel3rates[i];
+                wheel4average += wheel4rates[i];
+            }
+            wheel1average /= arraysize;    // Divide by arraysize to get the average
+            wheel2average /= arraysize;
+            wheel3average /= arraysize;
+            wheel4average /= arraysize;
+            
+            /* 
+            Assumed that,
+                wheel1 - front left
+                wheel2 - front right
+                wheel3 - rear left
+                wheel4 - rear right
+            */
+            
+            // Compare the averages of inside wheels and outside wheels
+            // Compensated instentanius values are stored in wheel1rate, wheel2rate, wheel3rate, wheel4rate. But the values related to original readings are stored in arrays. Therefore, when we compare the averages of the wheels, getting values from the arrays makes no error after compensation.
+            
+            // Inside wheels: wheel1 and wheel3
+            if ( ( abs(wheel1average - wheel3average) / std::min(wheel1average,wheel3average) ) > threshold) {
+                std::cout << "! Slip detected on inside wheels. \n\t- Wheel 1 average: " << wheel1average << "\n\t- Wheel 3 average: " << wheel3average << std::endl;
+
+                // Compensate for slipping effect 
+                // Assuming slipping only affects one wheel, adjust the erroneous wheel's reading
+                // To eleminate the slipping, errorneous wheel's reading is set to the reading of the other wheel
+                if (wheel1rate > wheel3rate) {
+                    std::cout << "Wheel 1 rate was " << wheel1rate << ". It is adjusted to " << wheel3rate << std::endl;
+                    wheel1rate = wheel3rate;
+                } else {
+                    std::cout << "Wheel 3 rate was " << wheel3rate << ". It is adjusted to " << wheel1rate << std::endl;
+                    wheel3rate = wheel1rate;
+                        
+                }
+            }
+            if ( ( abs(wheel2average - wheel4average) / std::min(wheel2average,wheel4average) ) > threshold) {
+                std::cout << "! Slip detected on outside wheels. \n\t- Wheel 2 average: " << wheel2average << "\n\t- Wheel 4 average: " << wheel4average << std::endl;
+
+                // Compensate for slipping effect 
+                // Assuming slipping only affects one wheel, adjust the erroneous wheel's reading
+                // To eleminate the slipping, errorneous wheel's reading is set to the reading of the other wheel
+                if (wheel2rate > wheel4rate) {
+                    wheel2rate = wheel4rate;
+                } else {
+                    wheel4rate = wheel2rate;
+                }
+            }
+        } else {
+            std::cout << "Initializing... : Waiting for the arrays to be filled with values." << std::endl;
+        }
+
+        // Write the comma-separated values to the output file
+        rawoutputFile << wheel1rates[pointer] << "," << wheel2rates[pointer] << "," << wheel3rates[pointer] << "," << wheel4rates[pointer] << std::endl;
+        processedoutputFile << wheel1rate << "," << wheel2rate << "," << wheel3rate << "," << wheel4rate << std::endl;
+        arrayaverageoutputFile << wheel1average << "," << wheel2average << "," << wheel3average << "," << wheel4average << std::endl;
+
+        frame++;
         // Increment the pointer
         if (pointer == 9) {
             pointer = 0;
@@ -108,92 +197,15 @@ int main() {
         else {
             pointer++;
         }
-
-        // TEST: Print the arrays
-        std::cout << "Wheel 1 rates: ";
-        for (int i = 0; i < 10; i++) {
-            std::cout << wheel1rates[i] << " ";
-        }
-        std::cout << std::endl;
-        std::cout << "Wheel 2 rates: ";
-        for (int i = 0; i < 10; i++) {
-            std::cout << wheel2rates[i] << " ";
-        }
-        std::cout << std::endl;
-        std::cout << "Wheel 3 rates: ";
-        for (int i = 0; i < 10; i++) {
-            std::cout << wheel3rates[i] << " ";
-        }
-        std::cout << std::endl;
-        std::cout << "Wheel 4 rates: ";
-        for (int i = 0; i < 10; i++) {
-            std::cout << wheel4rates[i] << " ";
-        }
-        std::cout << std::endl;
-
-        // In the beginging, the arrays are filled with zero. 
-        // We need to calculate the average of each wheel after the arrays are filled with values.
-        if (!(wheel1rates[9] == 0 && wheel2rates[9] == 0 && wheel3rates[9] == 0 && wheel4rates[9] == 0)) {
-            // Calculate the average of each wheel
-            for (int i = 0; i < 10; i++) {
-                wheel1average += wheel1rates[i];
-                wheel2average += wheel2rates[i];
-                wheel3average += wheel3rates[i];
-                wheel4average += wheel4rates[i];
-                }
-                wheel1average /= 10;    // Divide by 10 to get the average
-                wheel2average /= 10;
-                wheel3average /= 10;
-                wheel4average /= 10;
-                
-                /* 
-                Assumed that,
-                    wheel1 - front left
-                    wheel2 - front right
-                    wheel3 - rear left
-                    wheel4 - rear right
-                */
-               
-                // Compare the averages of inside wheels and outside wheels
-                // Compensated instentanius values are stored in wheel1rate, wheel2rate, wheel3rate, wheel4rate. But the values related to original readings are stored in arrays. Therefore, when we compare the averages of the wheels, getting values from the arrays makes no error after compensation.
-                
-                // Inside wheels: wheel1 and wheel3
-                if ( ( abs(wheel1average - wheel3average) / std::min(wheel1average,wheel3average) ) > threshold) {
-                    std::cout << "! Slip detected on inside wheels. \n\t- Wheel 1 average: " << wheel1average << "\n\t- Wheel 3 average: " << wheel3average << std::endl;
-
-                    // Compensate for slipping effect 
-                    // Assuming slipping only affects one wheel, adjust the erroneous wheel's reading
-                    // To eleminate the slipping, errorneous wheel's reading is set to the reading of the other wheel
-                    if (wheel1rate > wheel3rate) {
-                        wheel1rate = wheel3rate;
-                    } else {
-                        wheel3rate = wheel1rate;
-                    }
-                }
-                if ( ( abs(wheel2average - wheel4average) / std::min(wheel2average,wheel4average) ) > threshold) {
-                    std::cout << "! Slip detected on outside wheels. \n\t- Wheel 2 average: " << wheel2average << "\n\t- Wheel 4 average: " << wheel4average << std::endl;
-
-                    // Compensate for slipping effect 
-                    // Assuming slipping only affects one wheel, adjust the erroneous wheel's reading
-                    // To eleminate the slipping, errorneous wheel's reading is set to the reading of the other wheel
-                    if (wheel2rate > wheel4rate) {
-                        wheel2rate = wheel4rate;
-                    } else {
-                        wheel4rate = wheel2rate;
-                    }
-                }
-        } else {
-            std::cout << "Initializing... : Waiting for the arrays to be filled with values." << std::endl;
-        }
-
-        // Write the comma-separated values to the output file
-        outputFile << wheel1rate << "," << wheel2rate << "," << wheel3rate << "," << wheel4rate << std::endl;
-
-        frame++;
     }
 
     // Close the output file
-    outputFile.close();
+    rawoutputFile.close();
+    processedoutputFile.close();
+    arrayaverageoutputFile.close();
     
-    return 0;
+    std::string array[10] = {"00", "a1", "b2", "c3", "d4", "e5", "f6", "g7", "h8", "i9"};
+    std::cout << 3%10 << 2%10 << 1%10 << 0%10 << (-1)%10 << (-2)%10 << (-3)%10 << std::endl;
+    std::cout << array[3%10] << array[2%10] << array[1%10] << array[0%10] << array[(-1)%10] << array[(-2)%10] << array[(-3)%10] << std::endl;
+    return 0;    
 }
