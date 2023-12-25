@@ -17,6 +17,8 @@
 // };
 
 int main() {
+    int frame= 1;    // Frame number
+
     float wheel1rates[10] = {0};
     float wheel2rates[10] = {0};
     float wheel3rates[10] = {0};
@@ -30,8 +32,11 @@ int main() {
     float threshold = 0.05;  // Threshold for difference for inside and outside wheels
 
     std::ifstream file("readings.csv");
-    std::string line;       // A line in the file
+    std::string line;       // A line in readings the file
 
+    // Open the output file
+    std::ofstream outputFile("output.csv");
+    
     if (!getline(file, line)) {
         std::cerr << "Error reading the file or file is empty." << std::endl;
         return 1;  // Exit with an error code
@@ -39,6 +44,8 @@ int main() {
 
     while (getline(file, line))
     {
+        std::cout << "\n" << "Processing timeframe: " << frame << std::endl;
+
         /*
         Each line is a string. 
         In each line, there are 5 values separated by commas.
@@ -135,15 +142,25 @@ int main() {
                 // Compare the averages of inside wheels and outside wheels
                 // Inside wheels: wheel1 and wheel3
                 if ( ( abs(wheel1average - wheel3average) / std::min(wheel1average,wheel3average) ) > threshold) {
-                    std::cout << "Slip detected on inside wheels. Wheel 1 average: " << wheel1average << "Wheel 3 average: " << wheel3average << std::endl;
+                    std::cout << "! Slip detected on inside wheels. \n\t- Wheel 1 average: " << wheel1average << "\n\t- Wheel 3 average: " << wheel3average << std::endl;
                 }
                 if ( ( abs(wheel2average - wheel4average) / std::min(wheel2average,wheel4average) ) > threshold) {
-                    std::cout << "Slip detected on outside wheels." << std::endl;
+                    std::cout << "! Slip detected on outside wheels. \n\t- Wheel 2 average: " << wheel2average << "\n\t- Wheel 4 average: " << wheel4average << std::endl;
                 }
+        } else {
+            std::cout << "Initializing... : Waiting for the arrays to be filled with values." << std::endl;
         }
+
+        // Write the comma-separated values to the output file
+        outputFile << wheel1average << "," << wheel2average << "," << wheel3average << "," << wheel4average << std::endl;
+
         
 
+        frame++;
     }
+
+    // Close the output file
+    outputFile.close();
     
     return 0;
 }
