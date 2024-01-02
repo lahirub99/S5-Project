@@ -70,4 +70,44 @@ Main loop <<<
 The number of pulses reading provided by the encoder is directly proportional to the velocity of each wheel. Assumed that radiuses of all wheels are equal. Therefore we can use ‘number of cycles/ time’ for our calculations, without calculating the velocity of each tire separately. That will be an additional workload for the microcontroller restricting faster response because of the resource constraints.
 
 
+# Project Outcomes 
+
+I have implemented the necessary code for evaluations. 
+I focused on making the array size and threshold adjustable using constants for result comparison. The goal was to find the ideal pair of array size and threshold.
+
+## Code Implementation
+
+The program reads encoder values in each time frame. Initially, it waits for the arrays to be filled with values. Once filled, it calculates averages for each wheel in the selected range. It then compares the averages of the inside and outside wheels, compensating for slipping effects by adjusting the erroneous wheel's reading to the other paired wheel's values.
+
+You can find the code [here](https://github.com/lahirub99/S5-Project.git).
+
+## Parameter Tuning
+
+I experimented with different combinations of array size and threshold. Incrementing array size provides a history of each wheel's behavior, but higher sizes can cause instantaneous high rotation rates. Similarly, lower threshold values result in unnecessary adjustments, while higher thresholds create room for errors.
+
+### Example Scenarios
+
+#### Array Size = 10
+
+![Chart array=10](https://github.com/lahirub99/S5-Project/assets/91234872/286b8310-0671-4d49-b5e5-93b70fca15d3)
+
+Initial trials with an array size of 10 showed that slipping effects sometimes cancelled out due to the higher number of values.
+
+#### Array Size = 5, Threshold = 2%
+
+![Array = 5 outcome](https://github.com/lahirub99/S5-Project/assets/91234872/c3645ac8-4c1f-41b3-b3d4-713454fd3d1b)
+
+With an array size of 5 and a threshold of 2%, the program occasionally made adjustments that seemed unnecessary, as illustrated in the provided image.
+
+#### Array Size = 4, Threshold = 10%
+
+![Chart array=4](https://github.com/lahirub99/S5-Project/assets/91234872/244b3263-86cb-4c48-b671-b2fc410eb8aa)
+
+Optimal results were achieved with an array size of 4 and a threshold of 10%, as it accurately identified slipping scenarios without causing defects.
+
+## Evaluation Challenges
+
+Finding an ideal evaluation metric proved challenging, as there is no static way to measure the slipping effect or its prevention. Metrics such as rotation rates and array average values were limited to the selected range.
+
+
 
