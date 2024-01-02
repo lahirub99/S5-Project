@@ -69,3 +69,5 @@ Main loop <<<
 
 The number of pulses reading provided by the encoder is directly proportional to the velocity of each wheel. Assumed that radiuses of all wheels are equal. Therefore we can use ‘number of cycles/ time’ for our calculations, without calculating the velocity of each tire separately. That will be an additional workload for the microcontroller restricting faster response because of the resource constraints.
 
+
+
